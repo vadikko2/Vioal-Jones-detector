@@ -1,0 +1,1 @@
+./VJDetector ./faces.jpg .jpg ../weak_classifiers 19 19

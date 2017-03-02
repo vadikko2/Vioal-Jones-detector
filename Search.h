@@ -53,23 +53,16 @@ public:
     void searchFaceOnImage(const char* classifiers, size_t MinH, size_t MinW){
         wclass = new Classifiers(classifiers);
         wclass->init();
-        double scale = 1;
-      //  for (size_t i = 1; i < 11;i++){
+        double scale = 1.56;
+        //for (size_t i = 1; i < 11;i++){
             SlidingWindow(scale, MinH, MinW);
-          //  scale *= 1.56;
-        //    cout << scale << endl;
-      //  }
+        //    scale *= 1.56;
+         //   cout << scale << endl;
+        //}
         delete wclass;
     }
 
     void saveResults(){
-        FILE *fout = fopen("res.csv", "at");
-        cout << _check << endl;
-        if (_check)
-            fprintf(fout, "%d\n", 1);
-        else
-            fprintf(fout, "%d\n", 0);
-        fclose(fout);
         cout << "Visualization..." << endl;
         IplImage* image = cvLoadImage(fileName, 1);
         for (int i = 0; i < windowsWFace.size();i++){
@@ -87,10 +80,12 @@ protected:
     //ñêîëüçÿùåå îêíî
     void SlidingWindow(double scale, size_t MinH, size_t MinW){
         size_t scaleH = (size_t)((MinH*scale)+0.5);
+        std::cout<<scaleH<<std::endl;
         size_t scaleW = (size_t)((MinW*scale)+0.5);
+        std::cout<<scaleW<<std::endl;
         cout << scaleH << "	;	" << scaleW << endl;
-        for (size_t x = 0; x < image.height - scaleH; x += 2){
-            for (size_t y = 0; y < image.width - scaleW; y += 2){
+        for (size_t x = 0; x < image.height - scaleH; x += (size_t)(2*scale)){
+            for (size_t y = 0; y < image.width - scaleW; y += (size_t)(2*scale)){
                 std::vector<std::vector<int>> rectMatr;
                 rect(image.palette, x, y, scaleH, scaleW, &rectMatr);
                 _check = StrongClassifier(rectMatr, scale);
@@ -132,8 +127,10 @@ protected:
     //ñëàáûé êëàññèôèêàòîŵ èç áàçû
     int weak_classifier(RESPONSE_COORDINATES_SIZE_AND_TYPE &opt, std::vector<std::vector<int>> &window, double scale){
         std::vector<std::vector<int>> feature;
-        rect(window, (size_t)((double)opt.coordinate_x*scale), (size_t)((double)opt.coordinate_y*scale), (size_t)(scale*(double)opt.height), (size_t)(scale*(double)opt.width), &feature);
-        int fact = response(feature, opt.numOfFeatures, (size_t)(scale*opt.height + 0.5) - 1, (size_t)(scale*opt.width + 0.5) - 1);
+        //std::cout<<(size_t)((double)opt.coordinate_x*scale)<<" "<<(size_t)((double)opt.coordinate_y*scale)<<" "<<(size_t)(scale*(double)opt.height)<<" "<<(size_t)(scale*(double)opt.height)<<std::endl;
+        rect(window, (size_t)((double)opt.coordinate_x*scale ), (size_t)((double)opt.coordinate_y*scale), (size_t)(scale*(double)opt.height), (size_t)(scale*(double)opt.width), &feature);
+        //std::cout<<"?"<<std::endl;
+        int fact = response(feature, opt.numOfFeatures, (size_t)(scale*(double)opt.height - 1), (size_t)(scale*(double)opt.width ) - 1);
         return fact < opt.response ? 1 : 0;
     }
 

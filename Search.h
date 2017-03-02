@@ -53,7 +53,7 @@ public:
     void searchFaceOnImage(const char* classifiers, size_t MinH, size_t MinW){
         wclass = new Classifiers(classifiers);
         wclass->init();
-        double scale = 1.56;
+        double scale = 1;
         //for (size_t i = 1; i < 11;i++){
             SlidingWindow(scale, MinH, MinW);
         //    scale *= 1.56;
